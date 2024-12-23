@@ -2,9 +2,11 @@ package br.com.TabelaFipe.principal;
 
 import br.com.TabelaFipe.model.Dados;
 import br.com.TabelaFipe.model.Modelos;
+import br.com.TabelaFipe.model.Veiculo;
 import br.com.TabelaFipe.service.ConsumoApi;
 import br.com.TabelaFipe.service.ConverteDados;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -67,7 +69,22 @@ public class Principal {
         System.out.println("Modelos filtrados: ");
         modelosFiltrados.forEach(System.out::println);
 
-        System.out.println("Digite o código do modelo para buscar os valores por avaliação");
+        System.out.println("Digite o código do modelo para buscar os valores");
+        var codModelo = sc.nextLine();
 
+        endereco = endereco+"/"+codModelo+"/anos";
+        json = consumo.obterDados(endereco);
+        List<Dados> anos = conversor.obterLista(json, Dados.class); //Dados = sempre quando tiver código e nome
+        List<Veiculo> veiculos = new ArrayList<>();
+
+        for (int i = 0; i < anos.size(); i++){
+            var enderecoAnos = endereco + "/"+anos.get(i).codigo();
+            json = consumo.obterDados(enderecoAnos);
+            Veiculo veiculo = conversor.obterDados(json, Veiculo.class);
+            veiculos.add(veiculo);
+        }
+
+        System.out.println("Todos os veículos filtrados por ano: ");
+        veiculos.forEach(System.out::println);
     }
 }
